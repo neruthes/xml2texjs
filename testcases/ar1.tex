@@ -1,0 +1,46 @@
+
+    
+        \documentclass[a4paper,11pt]{article}
+        \usepackage{calc,fontspec,lipsum,datetime2,graphicx,tabu,tabularx,booktabs,tcolorbox}
+        \usepackage[textwidth=37em,vmargin=35mm]{geometry}
+        \title{Example Document}
+        \author{xml2texjs}
+        \date{
+            \today
+        }
+    
+
+    \begin{document}
+        \maketitle
+
+        \section{First Section}
+        \lipsum[1-2][1-3]
+
+        \section{Second Section}
+        \begin{center}
+            \scalebox{1.5}[4]{SCALING DEMO}
+        \end{center}
+
+        \section{Table Example}
+        \begin{tabularx}{0.7\linewidth}{Xrrr}
+            \toprule
+            Product & Quantity & Single Price & Price (\texteuro) \\
+            \midrule
+            Tomato & 2 & 15.00 & 30.00 \\
+            Potato & 10 & 7.00 & 70.00 \\
+            \midrule
+            Subtotal & & & 100.00 \\
+            +VAT & & & 6.00 \\
+            \midrule
+            Total & & & 106.00 \\
+            \bottomrule
+        \end{tabularx}
+
+        \section*{Unnumbered Section}
+        \begin{tcolorbox}[standard jigsaw,colframe=white!25!blue!88!green,colback=black!5!white,arc=0mm,title={Box Title}]
+            This is an example of tcolorbox.
+            \tcblower
+            Use ``\textbackslash tcblower'' command to separate vertical parts.
+        \end{tcolorbox}
+    \end{document}
+

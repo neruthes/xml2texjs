@@ -3,7 +3,15 @@
 A XML-based preprocessing format for generating LaTeX code. Written in JavaScript. Experimental. Unstable.
 
 
+## Getting Started
+
+```sh
+./make.sh testcases/
+```
+
+
 ## Overview
+
 ### Basic Layout
 ```xml
 <xml2tex>
@@ -27,6 +35,9 @@ A XML-based preprocessing format for generating LaTeX code. Written in JavaScrip
 | document | `\begin{document}\end{document}`    |
 | beginend | `\begin{...}\end{...}`              |
 | rawlatex | Pass raw string to output           |
+
+
+
 
 ## Syntax
 

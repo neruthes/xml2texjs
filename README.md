@@ -49,10 +49,19 @@ A XML-based preprocessing format for generating LaTeX code. Written in JavaScrip
 \section{First Section}
 ```
 
+### Command ending with asterisk
+```xml
+<section_STAR>First Section</section_STAR>
+```
+
+```tex
+\section*{First Section}
+```
+
 ### Command with params
 
 ```xml
-<parbox param-1="t" param-2="100pt" param-3="t">Hello World</parbox>
+<parbox params="[t][100pt][t]">Hello World</parbox>
 ```
 
 ```tex
@@ -76,13 +85,13 @@ Content
 ### Environment with bracket options
 
 ```xml
-<beginend env="tcolorbox" params="colback=black!3!white, colframe=black">
+<beginend env="tcolorbox" params="[colback=black!3!white, colframe=black]">
 ...
 </beginend>
 ```
 
 ```tex
-\begin{tcolorbox}{colback=black!3!white, colframe=black}
+\begin{tcolorbox}[colback=black!3!white, colframe=black]
 ...
 \end{tcolorbox}
 ```
@@ -91,8 +100,7 @@ Content
 
 ```xml
 <beginend env="tabularx">
-<rawlatex><![CDATA[{\linewidth}]]></rawlatex>
-<rawlatex>{llX}</rawlatex>
+<rawlatex>{\linewidth}{llX}</rawlatex>
 ...
 </beginend>
 ```
@@ -102,3 +110,14 @@ Content
 ...
 \end{tabularx}
 ```
+
+
+
+
+
+
+## Copyright
+
+Copyright (c) 2025 Neruthes.
+
+Published with GNU GPL 2.0 license.

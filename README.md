@@ -9,6 +9,10 @@ A XML-based preprocessing format for generating LaTeX code. Written in JavaScrip
 ./make.sh testcases/
 ```
 
+```sh
+node cli.js testcases/ar1.tex.xml > testcases/ar1.tex
+```
+
 See how [ar1.tex.xml](https://github.com/neruthes/xml2texjs/blob/master/testcases/ar1.tex.xml)
 gets converted to [ar1.tex](https://github.com/neruthes/xml2texjs/blob/master/testcases/ar1.tex)
 and how the [final PDF](https://pub-714f8d634e8f451d9f2fe91a4debfa23.r2.dev/xml2texjs/bbee28583ac58510f28399f4/ar1.pdf) looks like.

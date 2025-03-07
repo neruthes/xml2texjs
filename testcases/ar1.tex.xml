@@ -40,7 +40,7 @@
         </beginend>
         <par />
 
-        <FANCY_CONVERT filter="table2pandoc" filter-params="{lX}" filter-argv="{}">
+        <FANCY_CONVERT filter="table2pandoc">
             <![CDATA[ 
                 <table>
                     <thead>
@@ -51,7 +51,6 @@
                         <tr><td>Bob</td><td>The second placeholder name</td></tr>
                     </tbody>
                 </table>
-            </table>
             ]]>
         </FANCY_CONVERT>
         <par />

@@ -1,4 +1,4 @@
-# xml2tex (WIP)
+# xml2texjs (WIP)
 
 A XML-based preprocessing format for generating LaTeX code. Written in JavaScript. Experimental. Unstable.
 

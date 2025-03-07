@@ -56,8 +56,18 @@ const node_renderer_enter = {
         return tmpstr;
     },
     rawlatex: function (nodeRef) {
-        // console.error(nodeRef.textContent);
         return '';
+    },
+    content: function (nodeRef) {
+        return '{';
+    },
+    multicontent: function (nodeRef) {
+        let tmpstr = '\\' + nodeRef.getAttribute('cmd');
+        // Add params
+        if (nodeRef.getAttribute('params')) {
+            tmpstr += nodeRef.getAttribute('params');
+        };
+        return tmpstr;
     },
     FANCY_CONVERT: function (nodeRef) {
         // console.error(nodeRef.textContent);
@@ -86,6 +96,12 @@ const node_renderer_leave = {
         return '\\end{' + nodeRef.getAttribute('env') + '}';
     },
     rawlatex: function (nodeRef) {
+        return '';
+    },
+    content: function (nodeRef) {
+        return '}';
+    },
+    multicontent: function (nodeRef) {
         return '';
     },
     FANCY_CONVERT: function (nodeRef, session_obj) {
@@ -137,12 +153,13 @@ function serialize_tokens(tokens_arr) {
         // This is useful when working with \hline, \toprule, etc
         if (cached_prev_token.match(/^\\\w+$/) && token.match(/^\w/)) {
             before_token += ' ';
-        }
+        };
         
         if (final_output.endsWith('\n') || before_token.endsWith('\n')) {
             indent_padding = _space_pad(state_level_depth);
         };
-        final_output += before_token + indent_padding + token + after_token;
+        let tmp_result = before_token + indent_padding + token.replace(/^\n /, '') + after_token;
+        final_output += tmp_result;
         // Clean up
         if (token.startsWith('\\begin{')) {
             state_level_depth += 1;
@@ -163,32 +180,32 @@ const from_xml_to_tex = function (xml_string) {
     const xml_obj = doc.documentElement;
     // console.log(xml_obj);
 
-    let output_latex_buffer_arr = [];
+    const _special_modes_list = ['xml2tex', 'preamble', 'document', 'rawlatex', 'beginend', 'multicontent', 'content', 'FANCY_CONVERT'];
+    let output_latex_tokens_arr = [];
     const on_enter_node = function (nodeRef) {
         let mode = '_std';
-        if (['xml2tex', 'preamble', 'document', 'rawlatex', 'beginend', 'FANCY_CONVERT'].indexOf(nodeRef.tagName) !== -1) {
+        if (_special_modes_list.indexOf(nodeRef.tagName) !== -1) {
             mode = nodeRef.tagName;
         };
         const rendered_text = node_renderer_enter[mode](nodeRef, _session_obj);
-        output_latex_buffer_arr.push(rendered_text);
+        output_latex_tokens_arr.push(rendered_text);
     };
     const on_leave_node = function (nodeRef) {
         let mode = '_std';
-        if (['xml2tex', 'preamble', 'document', 'rawlatex', 'beginend', 'FANCY_CONVERT'].indexOf(nodeRef.tagName) !== -1) {
+        if (_special_modes_list.indexOf(nodeRef.tagName) !== -1) {
             mode = nodeRef.tagName;
         };
         const rendered_text = node_renderer_leave[mode](nodeRef, _session_obj);
-        output_latex_buffer_arr.push(rendered_text);
+        output_latex_tokens_arr.push(rendered_text);
     };
 
     traverseDom(xml_obj, on_enter_node, on_leave_node);
 
-    const new_arr = output_latex_buffer_arr.filter(
+    const new_arr = output_latex_tokens_arr.filter(
         str => str != undefined
     ).filter(
         str => str.replace(/[\n\s]/g, '').length > 0
     );
-    // .filter(str => !str.match(/^[\n\s]*$/))
     // console.error(new_arr);
     return serialize_tokens(new_arr).replace(/\n%\n/g, '\n%%%%%%%%\n');
 };

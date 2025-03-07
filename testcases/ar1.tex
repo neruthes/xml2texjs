@@ -16,7 +16,7 @@
 %%%%%%%%
     \end{center}%
     \par%
-    \section{Table Example}%
+    \section{Table Examples}%
 %%%%%%%%
     \begin{tabularx}{0.7\linewidth}{Xrrr}%
         \toprule Product & Quantity & Single Price & Price (\texteuro) \\%
@@ -41,11 +41,23 @@ Bob & The second placeholder name \\
 \end{longtable}
 %%%%%%%%
         \par%
-        \section*{Unnumbered Section}%
 %%%%%%%%
-        \begin{tcolorbox}[standard jigsaw,colframe=white!25!blue!88!green,colback=black!5!white,arc=0mm,title={Box Title}]%
-            This is an example of tcolorbox.\tcblower Use ``\textbackslash tcblower'' command to separate vertical parts.%
-        \end{tcolorbox}%
+        \begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+Table Head 1 & Table Head 2 \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Message & This table is converted from markdown. \\
+\end{longtable}
 %%%%%%%%
-    \end{document}%
+            \par%
+            \section*{Unnumbered Section}%
+%%%%%%%%
+            \begin{tcolorbox}[standard jigsaw,colframe=white!25!blue!88!green,colback=black!5!white,arc=0mm,title={Box Title}]%
+                This is an example of tcolorbox.\tcblower Use ``\textbackslash tcblower'' command to separate vertical parts.%
+            \end{tcolorbox}%
+%%%%%%%%
+        \end{document}%
 

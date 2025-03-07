@@ -5,9 +5,7 @@
         <usepackage params="[textwidth=37em,vmargin=35mm]">geometry</usepackage>
         <title>Example Document</title>
         <author>xml2texjs</author>
-        <date>
-            <today />
-        </date>
+        <date><today /></date>
     </preamble>
 
     <document>
@@ -24,7 +22,7 @@
         </beginend>
         <par />
 
-        <section>Table Example</section>
+        <section>Table Examples</section>
         <beginend env="tabularx" params="{0.7\linewidth}{Xrrr}">
             <toprule />
             <rawlatex>Product &amp; Quantity &amp; Single Price &amp; Price (<texteuro />) \\</rawlatex>
@@ -40,7 +38,7 @@
         </beginend>
         <par />
 
-        <FANCY_CONVERT filter="table2pandoc">
+        <FANCY_CONVERT filter="html_table_to_pandoc">
             <![CDATA[ 
                 <table>
                     <thead>
@@ -51,6 +49,15 @@
                         <tr><td>Bob</td><td>The second placeholder name</td></tr>
                     </tbody>
                 </table>
+            ]]>
+        </FANCY_CONVERT>
+        <par />
+
+        <FANCY_CONVERT filter="markdown_table_to_pandoc">
+            <![CDATA[ 
+Table Head 1 | Table Head 2
+------------ | ------------------
+Message      | This table is converted from markdown.
             ]]>
         </FANCY_CONVERT>
         <par />

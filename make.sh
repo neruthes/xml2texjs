@@ -11,6 +11,6 @@ case "$1" in
         node cli.js "$1" > "${1/.xml/}"
         ;;
     ntex )
-        ntex testcases/*.tex
+        ntex testcases/*.tex --2
         ;;
 esac

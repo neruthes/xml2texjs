@@ -36,13 +36,14 @@ and how the [final PDF](https://pub-714f8d634e8f451d9f2fe91a4debfa23.r2.dev/xml2
 
 #### Special tags
 
-| Tag      | Description                         |
-| -------- | ----------------------------------- |
-| xml2tex  | Root element for parser recognition |
-| preamble | Preamble                            |
-| document | `\begin{document}\end{document}`    |
-| beginend | `\begin{...}\end{...}`              |
-| rawlatex | Pass raw string to output           |
+| Tag                          | Description                         |
+| ---------------------------- | ----------------------------------- |
+| xml2tex                      | Root element for parser recognition |
+| preamble                     | Preamble                            |
+| document                     | `\begin{document}\end{document}`    |
+| beginend                     | `\begin{...}\end{...}`              |
+| rawlatex                     | Pass raw string to output           |
+| (More undocumented features) | See source code                     |
 
 
 
@@ -140,3 +141,6 @@ Content
 Copyright (c) 2025 Neruthes.
 
 Published with GNU GPL 2.0 license.
+
+
+

@@ -20,7 +20,7 @@ const NODE_TYPE_ELEMENT = 1;
 const NODE_TYPE_TEXT = 3;
 
 const node_renderer_enter = {
-    _std: function (nodeRef) {
+    _std: function (nodeRef, session_obj, document_obj) {
         if (nodeRef.nodeType === NODE_TYPE_TEXT) {
             return nodeRef.textContent;
         };
@@ -38,16 +38,16 @@ const node_renderer_enter = {
             return tmpstr;
         };
     },
-    xml2tex: function (nodeRef) {
+    xml2tex: function (nodeRef, session_obj, document_obj) {
         return '';
     },
-    preamble: function (nodeRef) {
+    preamble: function (nodeRef, session_obj, document_obj) {
         return '';
     },
-    document: function (nodeRef) {
+    document: function (nodeRef, session_obj, document_obj) {
         return '\\begin{document}';
     },
-    beginend: function (nodeRef) {
+    beginend: function (nodeRef, session_obj, document_obj) {
         let tmpstr = '\\begin{' + nodeRef.getAttribute('env') + '}';
         // Add params
         if (nodeRef.getAttribute('params')) {
@@ -55,13 +55,13 @@ const node_renderer_enter = {
         };
         return tmpstr;
     },
-    rawlatex: function (nodeRef) {
+    rawlatex: function (nodeRef, session_obj, document_obj) {
         return '';
     },
-    content: function (nodeRef) {
+    content: function (nodeRef, session_obj, document_obj) {
         return '{';
     },
-    multicontent: function (nodeRef) {
+    multicontent: function (nodeRef, session_obj, document_obj) {
         let tmpstr = '\\' + nodeRef.getAttribute('cmd');
         // Add params
         if (nodeRef.getAttribute('params')) {
@@ -69,13 +69,13 @@ const node_renderer_enter = {
         };
         return tmpstr;
     },
-    FANCY_CONVERT: function (nodeRef) {
+    FANCY_CONVERT: function (nodeRef, session_obj, document_obj) {
         // console.error(nodeRef.textContent);
         return '';
     },
 }
 const node_renderer_leave = {
-    _std: function (nodeRef) {
+    _std: function (nodeRef, session_obj, document_obj) {
         if (nodeRef.nodeType === NODE_TYPE_ELEMENT) {
             if (nodeRef.childNodes.length > 0) {
                 return '}';
@@ -83,36 +83,37 @@ const node_renderer_leave = {
         }
         return '';
     },
-    xml2tex: function (nodeRef) {
+    xml2tex: function (nodeRef, session_obj, document_obj) {
         return '';
     },
-    preamble: function (nodeRef) {
+    preamble: function (nodeRef, session_obj, document_obj) {
         return '';
     },
-    document: function (nodeRef) {
+    document: function (nodeRef, session_obj, document_obj) {
         return '\\end{document}';
     },
-    beginend: function (nodeRef) {
+    beginend: function (nodeRef, session_obj, document_obj) {
         return '\\end{' + nodeRef.getAttribute('env') + '}';
     },
-    rawlatex: function (nodeRef) {
+    rawlatex: function (nodeRef, session_obj, document_obj) {
         return '';
     },
-    content: function (nodeRef) {
+    content: function (nodeRef, session_obj, document_obj) {
         return '}';
     },
-    multicontent: function (nodeRef) {
+    multicontent: function (nodeRef, session_obj, document_obj) {
         return '';
     },
-    FANCY_CONVERT: function (nodeRef, session_obj) {
+    FANCY_CONVERT: function (nodeRef, session_obj, document_obj) {
         // Example: <FANCY_CONVERT filter="table2tabu" filter-params="{lX}" filter-argv="{}">
         const filter_ref = session_obj.fancy_converters[nodeRef.getAttribute('filter')];
         if (filter_ref) {
             return filter_ref({
+                nodeRef, session_obj,
                 cdata: nodeRef.textContent,
                 params: nodeRef.getAttribute('filter-params'),
                 argv: nodeRef.getAttribute('filter-argv'),
-            });
+            }, document_obj);
         };
         return `<FANCY_CONVERT><${nodeRef.textContent}>`;
     },
@@ -171,10 +172,14 @@ function serialize_tokens(tokens_arr) {
 
 
 
-const from_xml_to_tex = function (xml_string) {
+const from_xml_to_tex = function (xml_string, input_document_obj) {
     // `this` points to a `session_obj`?
     // console.error(this);
     const _session_obj = this;
+    const document_obj = {
+        ...input_document_obj,
+        RAM: {}
+    };
     const parser = new DOMParser();
     const doc = parser.parseFromString(xml_string, 'text/xml');
     const xml_obj = doc.documentElement;
@@ -187,7 +192,7 @@ const from_xml_to_tex = function (xml_string) {
         if (_special_modes_list.indexOf(nodeRef.tagName) !== -1) {
             mode = nodeRef.tagName;
         };
-        const rendered_text = node_renderer_enter[mode](nodeRef, _session_obj);
+        const rendered_text = node_renderer_enter[mode](nodeRef, _session_obj, document_obj);
         output_latex_tokens_arr.push(rendered_text);
     };
     const on_leave_node = function (nodeRef) {
@@ -195,7 +200,7 @@ const from_xml_to_tex = function (xml_string) {
         if (_special_modes_list.indexOf(nodeRef.tagName) !== -1) {
             mode = nodeRef.tagName;
         };
-        const rendered_text = node_renderer_leave[mode](nodeRef, _session_obj);
+        const rendered_text = node_renderer_leave[mode](nodeRef, _session_obj, document_obj);
         output_latex_tokens_arr.push(rendered_text);
     };
 
@@ -224,6 +229,46 @@ const _default_fancy_converters = {
     markdown_table_to_pandoc: function (task_obj) {
         const pandoc_proc = child_process.spawnSync(`pandoc`, ['-f', 'markdown', '-t', 'latex'], {input: task_obj.cdata});
         let out_str = pandoc_proc.stdout.toString();
+        return out_str;
+    },
+    svg_code_with_png: function (task_obj, document_obj) {
+        let counter = document_obj.RAM.svg_code_with_png__counter || 0;
+        document_obj.RAM.svg_code_with_png__counter = counter + 1;
+        let default_config_obj = {
+            png_prefix: '.tmp/'
+        };
+        let active_config_obj = { ...default_config_obj };
+        try {
+            let filter_argv_parsed = JSON.parse(task_obj.argv);
+            active_config_obj = { ...active_config_obj, ...filter_argv_parsed };
+        } catch (e) {
+            // Do nothing
+        };
+        // `\svgcodewithpng` argv: png_path, svg_code
+        let cmd_def = `\\providecommand{\\svgcodewithpng}[2]{%
+\\includegraphics[width=0.8\\linewidth]{#1}\\par%
+#2\\par
+}`;
+        const svg_text = task_obj.cdata;
+        // const hash_proc = child_process.spawnSync(`sha256sum`, [], { input: task_obj.cdata });
+        // const hash_str = hash_proc.stdout.toString().slice(0,15);
+        const document_identifier = document_obj.basename;
+        const svg_path = active_config_obj.png_prefix + document_identifier + '--' + document_obj.RAM.svg_code_with_png__counter + '.svg';
+        const png_path = active_config_obj.png_prefix + document_identifier + '--' + document_obj.RAM.svg_code_with_png__counter + '.png';
+        // console.error(`png_path`, png_path);
+        fs.writeFileSync(svg_path, task_obj.cdata);
+        const rsvgconvert_proc = child_process.spawnSync(`rsvg-convert`, [svg_path, '-h', process.env.SVG_HEIGHT || '1000', '-o', png_path]);
+        if (rsvgconvert_proc.error) {
+            console.error(`Fancy converter svg_code_with_png failed!`);
+            process.exit(rsvgconvert_proc.error);
+        };
+        const out_str = cmd_def + `\\svgcodewithpng{${png_path}}{%
+\\begin{lstlisting}
+${
+    svg_text.trim()
+    // .replace(/#/g, '\\#')
+}
+\\end{lstlisting}}`;
         return out_str;
     },
 };

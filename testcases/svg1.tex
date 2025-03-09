@@ -1,0 +1,23 @@
+\documentclass[a4paper,11pt]{article}%
+\usepackage{calc,fontspec,lipsum,datetime2,graphicx,longtable,tabu,tabularx,booktabs,tcolorbox,amssymb,amsmath,multicol}%
+\usepackage[textwidth=37em,vmargin=35mm]{geometry}%
+\title{SVG Embedding Example}%
+\author{xml2texjs}%
+\date{\today}%
+%%%%%%%%
+\begin{document}%
+    \maketitle\par%
+    \providecommand{\svgcodewithpng}[2]{%
+\includegraphics[width=0.8\linewidth]{#1}\par%
+#2\par
+}\svgcodewithpng{.tmp/svg1.tex.xml--1.png}{%
+\begin{lstlisting}
+<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <rect x="5" y="5" width="90" height="60" fill="rgba(0,0,0,0.1)" />
+    <text font-size="12" x="20" y="35" transform="scale(1,1.7)"
+    >Test SVG</text>
+</svg>
+\end{lstlisting}}\par%
+%%%%%%%%
+\end{document}%
+

@@ -226,7 +226,7 @@ const _default_fancy_converters = {
         let out_str = pandoc_proc.stdout.toString();
         return out_str;
     },
-    markdown_table_to_pandoc: function (task_obj) {
+    markdown_to_pandoc: function (task_obj) {
         const pandoc_proc = child_process.spawnSync(`pandoc`, ['-f', 'markdown', '-t', 'latex'], {input: task_obj.cdata});
         let out_str = pandoc_proc.stdout.toString();
         return out_str;

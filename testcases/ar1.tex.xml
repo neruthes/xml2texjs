@@ -62,7 +62,7 @@
         </FANCY_CONVERT>
         <par />
 
-        <FANCY_CONVERT filter="markdown_table_to_pandoc">
+        <FANCY_CONVERT filter="markdown_to_pandoc">
             <![CDATA[ 
 Table Head 1 | Table Head 2
 ------------ | ------------------
